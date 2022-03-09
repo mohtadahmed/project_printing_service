@@ -1,4 +1,9 @@
+from ast import Pass
+import email
+from email.message import EmailMessage
+from tkinter.tix import INTEGER
 from unicodedata import name
+from wsgiref.validate import validator
 from bcrypt import *
 from distutils.log import debug
 from enum import unique
@@ -7,7 +12,7 @@ from flask import Flask, render_template, url_for, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from fileinput import filename
@@ -38,16 +43,36 @@ def load_user(user_id):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+    password_confirm = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    student_id = db.Column(db.Integer, nullable=False, unique=True)
+    mobile_number = db.Column(db.Integer, nullable=False, unique=True)
 
 
 class RegisterForm(FlaskForm):
+    name = StringField(validators=[InputRequired(), Length(
+        min=4, max=200)], render_kw={"placeholder": "Enter Your Full Name"})
+
     username = StringField(validators=[InputRequired(), Length(
         min=4, max=20)], render_kw={"placeholder": "Username"})
 
     password = PasswordField(validators=[InputRequired(), Length(
-        min=4, max=20)], render_kw={"placeholder": "Password"})
+        min=4, max=20), validators.EqualTo('password_confirm', message='Passwords must match')], render_kw={"placeholder": "Password"})
+
+    password_confirm = PasswordField(validators=[InputRequired(), Length(
+        min=4, max=20)], render_kw={"placeholder": "Confirm Your Password"})
+
+    email = StringField(validators=[InputRequired(), Length(
+        min=10, max=120)], render_kw={"placeholder": "Email Address"})
+
+    student_id = IntegerField(validators=[InputRequired(), Length(
+        min=4, max=8)], render_kw={"placeholder": "Enter Your ID Number"})
+
+    mobile_number = IntegerField(validators=[InputRequired(), Length(
+        min=4, max=12)], render_kw={"placeholder": "Enter Your Mobile Number"})
 
     submit = SubmitField("Register")
 
@@ -70,12 +95,12 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
-@app.route('/')
+@ app.route('/')
 def home():
     return render_template('home.html')
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@ app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -88,13 +113,13 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route("/dashboard", methods=['GET', 'POST'])
-@login_required
+@ app.route("/dashboard", methods=['GET', 'POST'])
+@ login_required
 def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route("/uploadfile", methods=['GET', 'POST'])
+@ app.route("/uploadfile", methods=['GET', 'POST'])
 def uploadfile():
     if request.method == 'POST':
         # Handle POST Request here
@@ -140,19 +165,20 @@ def uploadfile():
     return render_template('dashboard.html')
 
 
-@app.route("/logout", methods=['GET', 'POST'])
+@ app.route("/logout", methods=['GET', 'POST'])
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route("/register", methods=['GET', 'POST'])
+@ app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
+        new_user = User(username=form.username.data,
+                        password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))

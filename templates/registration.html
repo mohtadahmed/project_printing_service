@@ -12,8 +12,13 @@
 
     <form action="" method="post">
       {{ form.hidden_tag() }}
+      {{ form.name}}
+      {{ form.email }}
       {{ form.username }}
       {{ form.password }}
+      {{ form.password_confirm }}
+      {{ form.student_id }}
+      {{ form.mobile_number }}
       {{ form.submit }}
     </form>
 
