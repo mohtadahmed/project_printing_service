@@ -68,10 +68,10 @@ class RegisterForm(FlaskForm):
     email = StringField(validators=[InputRequired(), Length(
         min=10, max=120)], render_kw={"placeholder": "Email Address"})
 
-    student_id = IntegerField(validators=[InputRequired(), Length(
+    student_id = StringField(validators=[InputRequired(), Length(
         min=4, max=8)], render_kw={"placeholder": "Enter Your ID Number"})
 
-    mobile_number = IntegerField(validators=[InputRequired(), Length(
+    mobile_number = StringField(validators=[InputRequired(), Length(
         min=4, max=12)], render_kw={"placeholder": "Enter Your Mobile Number"})
 
     submit = SubmitField("Register")
@@ -177,8 +177,8 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data,
-                        password=hashed_password)
+        new_user = User(name=form.name.data, username=form.username.data,
+                        password=hashed_password, password_confirm=hashed_password, email=form.email.data, student_id=form.student_id.data, mobile_number=form.mobile_number.data)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
