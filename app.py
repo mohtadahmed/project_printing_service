@@ -1,6 +1,7 @@
 from ast import Pass
 import email
 from email.message import EmailMessage
+from random import sample
 from tkinter.tix import INTEGER
 from unicodedata import name
 from wsgiref.validate import validator
@@ -21,6 +22,9 @@ from importlib.resources import path
 import os
 from werkzeug.utils import secure_filename
 import PyPDF2
+import win32print
+import subprocess
+import time
 
 
 app = Flask(__name__)
@@ -129,7 +133,7 @@ def uploadfile():
             # name = str(request.form['person'])
             name = request.args['username']
             filename = secure_filename(f.filename)
-            path = 'upload/file/' + name
+            path = 'static/upload/file/' + name
            # x = os.mkdir(path)
 
            # IF Else loop for checking the directory exists or not
@@ -157,11 +161,23 @@ def uploadfile():
             # Code for PDF Page Counter
             sample_pdf = open(filePath, mode='rb')
             pdfdoc = PyPDF2.PdfFileReader(sample_pdf)
-            print(pdfdoc.numPages)
+            # print(pdfdoc.numPages)
             pageNumber = pdfdoc.numPages
             # Code for PDF Page Counter
 
-            return render_template('upload_print.html', pageNumber=pageNumber)
+            # Showing PDF and Print option to user
+            # pdf_file = url_for('uploadfile', filename=filename)
+
+            # print(pdf_file)
+            # acrobat = 'C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe'
+            # name = win32print.GetDefaultPrinter()
+            # cmd = '"{}" /n /o /t "{}" "{}"'.format(acrobat, pdf_file, name)
+            # for i in range(1):
+            #     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+            #                             stderr=subprocess.PIPE)
+            # Showing PDF and Print option to user
+
+            return render_template('upload_print.html', pageNumber=pageNumber, filename=filename, filePath=filePath, username=name)
     return render_template('dashboard.html')
 
 

@@ -5,11 +5,48 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+
+    <style>
+      iframe {
+        /* background-color: black; */
+        background: url(C:\Users\Saeem\Desktop\Printing_service\upload\file\xyzabc\Bkash.pdf);
+        border: 5px solid red;
+      }
+    </style>
   </head>
   <body>
     <h1>Your File Has Uploaded</h1>
 
     <!-- Showing PDF Page Number to HTML Page -->
     <h1>Your PDF has {{pageNumber}} Pages</h1>
+
+    <!-- <a href="static/upload/file/hedayet/flexbox-challenge-4.pdf">Show file</a> -->
+
+    <iframe
+      src="{{
+      filePath
+      }}"
+      frameborder="0"
+      id="myFrame"
+      height="300"
+      width="600"
+    ></iframe>
+
+    <!-- <img src="static/MohtadAhmed.jpg" alt="" /> -->
+
+    <p>
+      <input type="button" id="bt" onclick="print()" value="Print PDF" />
+    </p>
+    <!-- Showing Pdf File using Iframe -->
+
+    <!-- C:\Users\Saeem\Desktop\Printing_service\upload\file\hedayet -->
+
+    <script>
+      let print = () => {
+        let objFra = document.getElementById("myFrame");
+        objFra.contentWindow.focus();
+        objFra.contentWindow.print();
+      };
+    </script>
   </body>
 </html>
