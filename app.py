@@ -177,7 +177,12 @@ def uploadfile():
             #                             stderr=subprocess.PIPE)
             # Showing PDF and Print option to user
 
-            return render_template('upload_print.html', pageNumber=pageNumber, filename=filename, filePath=filePath, username=name)
+            # Cost Calculation section
+            totalCost = pageNumber * 3
+            print(totalCost)
+            # Cost Calculation section
+
+            return render_template('upload_print.html', pageNumber=pageNumber, filename=filename, filePath=filePath, username=name, totalCost=totalCost)
     return render_template('dashboard.html')
 
 
